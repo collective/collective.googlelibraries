@@ -16,8 +16,6 @@ class ILibrary(interface.Interface):
 
     url = schema.URI(title=_(u"URL minified"))
 
-    url_u = schema.URI(title=_(u"URL non minified"))
-
 class IGoogleLibrariesViewlet(interface.Interface):
     """An accessor component to libraries"""
 
