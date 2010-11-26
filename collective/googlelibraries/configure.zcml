@@ -21,7 +21,7 @@
       name="googlelibraries"
       for="*"
       manager="plone.app.layout.viewlets.interfaces.IHtmlHeadLinks"
-      class=".viewlet.GoogleLibraries"
+      class=".viewlet.GoogleLibrariesViewlet"
       layer=".interfaces.IGoogleLibrariesLayer"
       permission="zope2.View"
       />
