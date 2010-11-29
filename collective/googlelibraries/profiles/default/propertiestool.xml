@@ -8,6 +8,7 @@
    <element
       value="http://testing:8080   | ABQIAAAAaKes6QWqobpCx2AOamo-shS8tbwkwQvVo8y2jCgM8I6Nv1EJJxSpbhzdXfa06Vx2SpX3do9jOWJM6g"/>
   </property>
-  <property name="loader_module" type="string"></property>
+  <property name="loader_mode" type="string"></property>
+  <property name="libraries" type="lines"></property>
  </object>
 </object>

@@ -31,13 +31,14 @@ class GoogleLibrariesViewlet(ViewletBase):
 
     @property
     def libraries(self):
+        res = []
         libs = self.library_manager.libraries_dict
         if self.mode == 'scripttag':
             #return a list of URL
-            res = []
-            for lib in libs:
-                res.append(lib.url)
-            return res
+            for lib in libs.keys():
+                res.append(libs[lib].url)
+        self.context.plone_log(res)
+        return res
 
     @property
     def mode(self):
