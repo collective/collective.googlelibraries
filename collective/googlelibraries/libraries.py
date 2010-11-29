@@ -1,5 +1,13 @@
+from zope import component
 from zope import interface
+from zope import schema
+from Products.CMFDefault.formlib.schema import SchemaAdapterBase
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+
+from collective.googlelibraries import config
 from collective.googlelibraries import interfaces
+from collective.googlelibraries import messageFactory as _
 
 class Library(object):
     interface.implements(interfaces.ILibrary)
@@ -16,6 +24,8 @@ class Library(object):
         if self.mode != 'minified':
             return self._url_u
         return self._url
+
+#Now lets define all available libraries
 
 GOOGLE_LIBRARIES = {}
 
@@ -88,21 +98,56 @@ for v in ('2.6.0', '2.7.0', '2.8.0r4', '2.8.1','2.8.2'):
     url = "https://ajax.googleapis.com/ajax/libs/yui/%s/build/yuiloader/yuiloader-min.js"%v
     GOOGLE_LIBRARIES["yui"][v] = Library("yui","Yahoo! User Interface Library (YUI)", v, url_u, url)
 
+DEFAULT_LOADER_MODE_CHOICES = schema.vocabulary.SimpleVocabulary((
+    schema.vocabulary.SimpleTerm('loader','loader',_(u'google.load')),
+    schema.vocabulary.SimpleTerm('scripttag','scripttag',_(u'script tags')),
+    schema.vocabulary.SimpleTerm('onerequest','onerequest',_(u'One request')),
+))
 
-class LibraryManager(object):
+terms = []
+for l in GOOGLE_LIBRARIES.keys():
+    terms.append(schema.vocabulary.SimpleTerm(l,l,l))
+
+GOOGLE_LIBRARIES_VOCABULARY = schema.vocabulary.SimpleVocabulary(terms)
+
+
+
+class LibraryManager(SchemaAdapterBase):
+    """The library manager. manage CRUD on Library"""
+    component.adapts(IPloneSiteRoot)
+    interface.implements(interfaces.ILibraryManager)
+
     def __init__(self, context):
         self.context = context
 
-    def add(self, library):
-        pass
+    def get_loader_mode(self):
+        return getattr(self.properties, config.PROPERTY_LOADER_MODE_FIELD, '')
 
-    def remove(self, library):
-        pass
+    def set_loader_mode(self, value):
+        self.properties._updateProperty(config.PROPERTY_LOADER_MODE_FIELD, value)
+
+    loader_mode = property(get_loader_mode, set_loader_mode)
+
+    def get_libraries(self):
+        return getattr(self.properties, config.PROPERTY_LIBRARIES_FIELD, '')
+
+    def set_libraries(self, value):
+        self.properties._updateProperty(config.PROPERTY_LIBRARIES_FIELD, value)
+
+    libraries = property(get_libraries, set_libraries)
 
     @property
-    def libraries(self):
-        return []
+    def properties(self):
+        return getToolByName(self.context, 'portal_properties').google_properties
 
     @property
-    def available_libraries(self):
-        return GOOGLE_LIBRARIES
+    def libraries_dict(self):
+        res = {}
+
+        for lib in self.libraries:
+            value = lib.split('|')
+            libname = value[0].strip()
+            version = value[1].strip()
+            res[libname] = GOOGLE_LIBRARIES[libname][version]
+        
+        return res

@@ -25,21 +25,55 @@ class IGoogleLibrariesViewlet(interface.Interface):
     libraries = schema.List(title=_(u"Libraries"),
                             value_type=schema.Object(ILibrary, title=u"Library"))
 
+DEFAULT_LOADER_MODE_CHOICES = schema.vocabulary.SimpleVocabulary((
+    schema.vocabulary.SimpleTerm('loader','loader',_(u'google.load')),
+    schema.vocabulary.SimpleTerm('scripttag','scripttag',_(u'script tags')),
+    schema.vocabulary.SimpleTerm('onerequest','onerequest',_(u'One request')),
+))
 
 class ILibraryManager(interface.Interface):
-    """Define API to manage libraries"""
+    """The library manager. manage CRUD on Library"""
 
-    mode = schema.ASCIILine(title=_(u"Mode"),
-                            description=_(u"Shoud be in 'script', 'load'"))
 
-    libraries = schema.List(title=_(u"Libraries"),
-                            value_type=schema.Object(ILibrary, title=u"Library"))
+    loader_mode = schema.Choice(
+                       title=_('label_loader_mode', default=u'Mode'),
+                       description=_('help_loader_mode',
+                                     default=u"Include mode used to include"
+                                     "libraries"),
+                       vocabulary=DEFAULT_LOADER_MODE_CHOICES)
 
-    available_libraries = schema.List(title=_(u"Libraries"),
-                                      value_type=schema.Object(ILibrary, title=u"Library"))
+    libraries = schema.Tuple(
+                    title=_('label_libraries',
+                            default=u'Google Libraries'),
+                    description=_('help_libraires',
+                                  default=u"Add Google Libraries"),
+                    unique=True,
+                    value_type=schema.ASCIILine(
+                        title=_('Library'),
+                    ),
+                  )
 
-    def add(library):
-        """Add a library to load"""
 
-    def remove(library):
-        """Remove a library from loading"""
+class IGoogleAPIKey(schema.interfaces.IASCIILine):
+    u"""Field for a google api key."""
+
+class GoogleAPIKey(schema.ASCIILine):
+    __doc__ = IGoogleAPIKey.__doc__
+    interface.implements(IGoogleAPIKey)
+
+
+class IAPIKeyManager(interface.Interface):
+
+    google_keys = schema.Tuple(
+                    title=_('label_google_keys',
+                            default=u'Google Libraries API Keys'),
+                    description=_('help_google_keys',
+                                  default=u"Add Google Libraries API keys. "
+                                           "You have to use the client "
+                                           "side url at which your site "
+                                           "is visible."),
+                    unique=True,
+                    value_type=GoogleAPIKey(
+                        title=_('Key'),
+                    ),
+                  )

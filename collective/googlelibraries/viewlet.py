@@ -1,5 +1,9 @@
 from plone.app.layout.viewlets.common import ViewletBase
+from zope import component
 from zope import interface
+
+from Products.CMFCore.utils import getToolByName
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from collective.googlelibraries import interfaces
 from collective.googlelibraries import libraries
@@ -11,7 +15,7 @@ TEMPLATES={
            }
 DEBUG = True
 if DEBUG:
-    TEMPLATES['script'] = """<script src="%(url)s"><script> """
+    TEMPLATES['scripttag'] = """<script src="%(url)s"><script> """
     TEMPLATES['load']   = """google.load("%(id)s","%(version)s",{uncompressed:true})"""
 
 class GoogleLibrariesViewlet(ViewletBase):
@@ -20,17 +24,48 @@ class GoogleLibrariesViewlet(ViewletBase):
     should render the include of jsapi with key and the google.load calls
     """
     interface.implements(interfaces.IGoogleLibrariesViewlet)
-    
+
+    template_scripttags = ViewPageTemplateFile('templates/scripttags.pt')
+    template_load       = ViewPageTemplateFile('templates/load.pt')
+    template_onerequest = ViewPageTemplateFile('templates/onerequest.pt')
+
     @property
     def libraries(self):
-        return []
+        libs = self.library_manager.libraries_dict
+        if self.mode == 'scripttag':
+            #return a list of URL
+            res = []
+            for lib in libs:
+                res.append(lib.url)
+            return res
 
     @property
     def mode(self):
-        return 'script'
+        return self.library_manager.loader_mode
+
+    @property
+    def api_key(self):
+        google_keys = self.apikey_manager.get_google_keys_dict()
+        host = self.request.get('SERVER_URL')
+        return google_keys.get(host, '')
 
     def index(self):
-        s = TEMPLATES['jsapi']
-        for l in self.libraries:
-            s += TEMPLATES[self.mode]%(l)
-        return s
+        if self.mode == 'scripttag':
+            return self.template_scripttags()
+
+        elif self.mode == 'googleload':
+            return self.template_load()
+        else:
+            return self.template_onerequest()
+
+    @property
+    def apikey_manager(self):
+        return interfaces.IAPIKeyManager(self.portal)
+
+    @property
+    def library_manager(self):
+        return interfaces.ILibraryManager(self.portal)
+
+    @property
+    def portal(self):
+        return getToolByName(self.context, 'portal_url').getPortalObject()

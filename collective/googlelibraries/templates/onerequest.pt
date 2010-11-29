@@ -1,0 +1,1 @@
+<script type="text/javascript" tal:attributes="src string:https://www.google.com/jsapi?key=${view/api_key}&${view/libraries}"></script>

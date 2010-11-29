@@ -29,7 +29,11 @@
 
   <adapter
       zcml:condition="installed plone.app.controlpanel"
-      factory=".controlpanel.FormAdapter" />
+      factory=".apikey.APIKeyManager" />
+
+  <adapter
+      zcml:condition="installed plone.app.controlpanel"
+      factory=".libraries.LibraryManager" />
 
 
   <browser:page
@@ -39,5 +43,11 @@
       class=".controlpanel.GoogleLibrariesControlPanel"
       permission="cmf.ManagePortal"
       />
-
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for=".interfaces.IGoogleAPIKey"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".apikey.GoogleAPIKeyWidget"
+      permission="zope.Public"
+      />
 </configure>
