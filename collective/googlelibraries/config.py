@@ -1,0 +1,2 @@
+PROPERTY_GOOGLE_KEYS_FIELD = "google_keys"
+PROPERTY_LOADER_MODE_FIELD = "loader_mode"

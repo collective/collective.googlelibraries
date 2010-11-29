@@ -21,7 +21,7 @@ class GoogleLibrariesViewlet(ViewletBase):
     """
     interface.implements(interfaces.IGoogleLibrariesViewlet)
     
-    @properties
+    @property
     def libraries(self):
         return []
 
@@ -29,8 +29,8 @@ class GoogleLibrariesViewlet(ViewletBase):
     def mode(self):
         return 'script'
 
-    def render_libraries(self):
+    def index(self):
         s = TEMPLATES['jsapi']
-        for l in libraries():
+        for l in self.libraries:
             s += TEMPLATES[self.mode]%(l)
         return s
