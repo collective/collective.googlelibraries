@@ -29,7 +29,7 @@ class ScriptsView(ScriptsView):
         """
 
         result = []
-        libs = self.library_manager.libraries_dict
+        libs = self.library_manager.libraries
         mode = self.mode
         api_key = self.api_key
 
@@ -38,17 +38,17 @@ class ScriptsView(ScriptsView):
             data['src'] += self.api_key
             result.append(data)
 
-            for lib in libs.keys():
+            for lib in libs:
                 data = BASE.copy()
-                data['src'] = libs[lib].url
+                data['src'] = lib.url
                 result.append(data)
 
         if mode == 'autoload' and api_key:
             data = JSAPI.copy()
             modules = []
 
-            for lib in libs.keys():
-                modules.append({"name":lib, "version":libs[lib].version})
+            for lib in libs:
+                modules.append({"name":lib.id, "version":lib.version})
 
             encoded_modules = urllib.quote(str({'modules':modules}))
             data['src'] += self.api_key + '&autoload=' + encoded_modules

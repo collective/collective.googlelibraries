@@ -12,6 +12,8 @@ class Test(base.TestCase):
         self.failUnless(len(self.manager.libraries)==0)
         self.manager.libraries = ('jquery | 1.4.2',)
         self.failUnless(len(self.manager.libraries)==1)
+        lib, = self.manager.libraries
+        self.failUnless(type(lib)==libraries.Library)
 
     def test_loader_mode(self):
         self.failUnless(not self.manager.loader_mode)
