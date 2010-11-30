@@ -1,6 +1,8 @@
 from zope import component
 from zope import interface
 from zope import schema
+from zope.app.form.browser.textwidgets import ASCIIWidget
+from zope.app.form.browser.widget import renderElement
 from Products.CMFDefault.formlib.schema import SchemaAdapterBase
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
@@ -24,6 +26,9 @@ class Library(object):
         if self.mode != 'minified':
             return self._url_u
         return self._url
+
+    def __str__(self):
+        return '%s | %s'%(self.id, self.version)
 
 #Now lets define all available libraries
 
@@ -105,6 +110,52 @@ for l in GOOGLE_LIBRARIES.keys():
 GOOGLE_LIBRARIES_VOCABULARY = schema.vocabulary.SimpleVocabulary(terms)
 
 
+class LibraryWidget(ASCIIWidget):
+    """Library widget"""
+
+    type = 'library'
+
+    def hasInput(self):
+        return (self.name+'.id' in self.request.form and
+                self.name+'.version' in self.request.form)
+
+    def _getFormInput(self):
+        url = self.request.get(self.name+'.id').strip()
+        key = self.request.get(self.name+'.version').strip()
+        return "%s | %s" % (url, key)
+
+    def __call__(self):
+        value = self._getFormValue()
+        if value is None or value == self.context.missing_value:
+            value = ''
+        value = value.split("|")
+        if len(value) == 2:
+            value = (value[0].strip(), value[1].strip())
+        else:
+            value = ('', '')
+
+
+        name = self.name + '.id'
+        id = '<select id="%s" name="%s">'%(name, name)
+        for i in GOOGLE_LIBRARIES.keys():
+            if value[0] == i:
+                id += '<option value="%s" selected="selected" />%s'%(i, i)
+            else:
+                id += '<option value="%s" />%s'%(i, i)
+        id += '</select>'
+
+        version = renderElement(self.tag,
+                            type=self.type,
+                            name=self.name+'.version',
+                            id=self.name+'.version',
+                            value=value[1],
+                            cssClass=self.cssClass,
+                            size=8,
+                            extra=self.extra)
+
+        return "%s %s" % (id, version)
+
+
 
 class LibraryManager(SchemaAdapterBase):
     """The library manager. manage CRUD on Library"""
@@ -142,6 +193,11 @@ class LibraryManager(SchemaAdapterBase):
             value = lib.split('|')
             libname = value[0].strip()
             version = value[1].strip()
+            if not version:
+                #get the last available one
+                versions = GOOGLE_LIBRARIES[libname].keys()
+                versions.sort()
+                version = versions[-1]
             res[libname] = GOOGLE_LIBRARIES[libname][version]
-        
+
         return res

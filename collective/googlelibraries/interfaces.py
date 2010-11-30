@@ -16,14 +16,12 @@ class ILibrary(interface.Interface):
 
     url = schema.URI(title=_(u"URL minified"))
 
-class IGoogleLibrariesViewlet(interface.Interface):
-    """An accessor component to libraries"""
+class ILibraryField(schema.interfaces.IASCIILine):
+    u"""Field for Library"""
 
-    mode = schema.ASCIILine(title=_(u"Mode"),
-                            description=_(u"Shoud be in 'script', 'load'"))
-
-    libraries = schema.List(title=_(u"Libraries"),
-                            value_type=schema.Object(ILibrary, title=u"Library"))
+class LibraryField(schema.ASCIILine):
+    __doc__ = ILibraryField.__doc__
+    interface.implements(ILibraryField)
 
 DEFAULT_LOADER_MODE_CHOICES = schema.vocabulary.SimpleVocabulary((
     schema.vocabulary.SimpleTerm('scripttag','scripttag',_(u'script tags')),
@@ -48,7 +46,7 @@ class ILibraryManager(interface.Interface):
                     description=_('help_libraires',
                                   default=u"Add Google Libraries"),
                     unique=True,
-                    value_type=schema.ASCIILine(
+                    value_type=LibraryField(
                         title=_('Library'),
                     ),
                   )

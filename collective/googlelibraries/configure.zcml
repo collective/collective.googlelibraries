@@ -49,4 +49,11 @@
       factory=".apikey.GoogleAPIKeyWidget"
       permission="zope.Public"
       />
+  <view
+      type="zope.publisher.interfaces.browser.IBrowserRequest"
+      for=".interfaces.ILibraryField"
+      provides="zope.app.form.interfaces.IInputWidget"
+      factory=".libraries.LibraryWidget"
+      permission="zope.Public"
+      />
 </configure>
