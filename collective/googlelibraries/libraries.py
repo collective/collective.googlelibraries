@@ -98,12 +98,6 @@ for v in ('2.6.0', '2.7.0', '2.8.0r4', '2.8.1','2.8.2'):
     url = "https://ajax.googleapis.com/ajax/libs/yui/%s/build/yuiloader/yuiloader-min.js"%v
     GOOGLE_LIBRARIES["yui"][v] = Library("yui","Yahoo! User Interface Library (YUI)", v, url_u, url)
 
-DEFAULT_LOADER_MODE_CHOICES = schema.vocabulary.SimpleVocabulary((
-    schema.vocabulary.SimpleTerm('loader','loader',_(u'google.load')),
-    schema.vocabulary.SimpleTerm('scripttag','scripttag',_(u'script tags')),
-    schema.vocabulary.SimpleTerm('autoload','autoload',_(u'One request (auto load)')),
-))
-
 terms = []
 for l in GOOGLE_LIBRARIES.keys():
     terms.append(schema.vocabulary.SimpleTerm(l,l,l))

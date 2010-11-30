@@ -26,9 +26,8 @@ class IGoogleLibrariesViewlet(interface.Interface):
                             value_type=schema.Object(ILibrary, title=u"Library"))
 
 DEFAULT_LOADER_MODE_CHOICES = schema.vocabulary.SimpleVocabulary((
-    schema.vocabulary.SimpleTerm('loader','loader',_(u'google.load')),
     schema.vocabulary.SimpleTerm('scripttag','scripttag',_(u'script tags')),
-    schema.vocabulary.SimpleTerm('onerequest','onerequest',_(u'One request')),
+    schema.vocabulary.SimpleTerm('autoload','autoload',_(u'Autoload')),
 ))
 
 class ILibraryManager(interface.Interface):
@@ -40,6 +39,7 @@ class ILibraryManager(interface.Interface):
                        description=_('help_loader_mode',
                                      default=u"Include mode used to include"
                                      "libraries"),
+                       required=False,
                        vocabulary=DEFAULT_LOADER_MODE_CHOICES)
 
     libraries = schema.Tuple(

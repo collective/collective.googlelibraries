@@ -31,8 +31,9 @@ class ScriptsView(ScriptsView):
         result = []
         libs = self.library_manager.libraries_dict
         mode = self.mode
+        api_key = self.api_key
 
-        if mode == 'scripttag':
+        if mode == 'scripttag' and api_key:
             data = JSAPI.copy()
             data['src'] += self.api_key
             result.append(data)
@@ -42,7 +43,7 @@ class ScriptsView(ScriptsView):
                 data['src'] = libs[lib].url
                 result.append(data)
 
-        if mode == 'autoload':
+        if mode == 'autoload' and api_key:
             data = JSAPI.copy()
             modules = []
 
@@ -53,7 +54,6 @@ class ScriptsView(ScriptsView):
             data['src'] += self.api_key + '&autoload=' + encoded_modules
             result.append(data)
 
-        self.context.plone_log(result)
         result.extend(super(ScriptsView,self).scripts())
 
         return result
