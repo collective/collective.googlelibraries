@@ -1,4 +1,0 @@
-<script type="text/javascript" tal:attributes="src string:https://www.google.com/jsapi?key=${view/api_key}"></script>
-<tal:for repeat="library view/libraries">
-<script type="text/javascript" tal:attributes="src string:${library}"></script>
-</tal:for>

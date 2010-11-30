@@ -101,7 +101,7 @@ for v in ('2.6.0', '2.7.0', '2.8.0r4', '2.8.1','2.8.2'):
 DEFAULT_LOADER_MODE_CHOICES = schema.vocabulary.SimpleVocabulary((
     schema.vocabulary.SimpleTerm('loader','loader',_(u'google.load')),
     schema.vocabulary.SimpleTerm('scripttag','scripttag',_(u'script tags')),
-    schema.vocabulary.SimpleTerm('onerequest','onerequest',_(u'One request')),
+    schema.vocabulary.SimpleTerm('autoload','autoload',_(u'One request (auto load)')),
 ))
 
 terms = []

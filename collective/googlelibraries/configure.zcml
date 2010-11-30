@@ -18,11 +18,10 @@
       />
   <!-- -*- extra stuff goes here -*- -->
 
-  <browser:viewlet
-      name="googlelibraries"
+  <browser:page
+      name="resourceregistries_scripts_view"
       for="*"
-      manager="plone.app.layout.viewlets.interfaces.IHtmlHeadLinks"
-      class=".viewlet.GoogleLibrariesViewlet"
+      class=".scripts.ScriptsView"
       layer=".interfaces.IGoogleLibrariesLayer"
       permission="zope2.View"
       />
