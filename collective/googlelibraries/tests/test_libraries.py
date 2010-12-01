@@ -15,9 +15,22 @@ class Test(base.TestCase):
         lib, = self.manager.libraries
         self.failUnless(type(lib)==libraries.Library)
 
-    def test_loader_mode(self):
-        self.failUnless(not self.manager.loader_mode)
-        self.manager.loader_mode = 'autoload'
+    def test_noversion(self):
+        self.manager.libraries = ('jquery | ',)
+        lib, = self.manager.libraries
+        self.failUnless(lib.version == lib.versions[-1])
+
+    def test_notexistinglib(self):
+        self.manager.libraries = ('notexisting | ',)
+        self.failUnless(len(self.manager.libraries)==0)
+
+    def test_badversion(self):
+        self.manager.libraries = ('jquery | 1.1',)
+        self.failUnless(len(self.manager.libraries)==0)
+
+    def test_badconfigformat(self):
+        self.manager.libraries = 'bad format'
+        self.failUnless(len(self.manager.libraries)==0)
 
 def test_suite():
     suite = unittest.TestSuite()

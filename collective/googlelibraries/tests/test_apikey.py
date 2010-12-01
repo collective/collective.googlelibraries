@@ -11,7 +11,15 @@ class Test(base.TestCase):
     def test_keys(self):
         self.failUnless(len(self.manager.google_keys)==0)
         self.manager.google_keys = ('http://nohost | ZZOOPPEE',)
-        self.failUnless(len(self.manager.google_keys)==1)
+        self.failUnless(len(self.manager.google_keys)==1,
+                        self.manager.google_keys)
+
+    def test_api_key(self):
+        self.manager.google_keys = ('http://nohost | ZZOOPPEE',)
+        self.failUnless(self.manager.api_key(self.portal.REQUEST) =='ZZOOPPEE')
+
+    def test_nokey(self):
+        self.failUnless(self.manager.api_key(self.portal.REQUEST) is None)
 
 def test_suite():
     suite = unittest.TestSuite()

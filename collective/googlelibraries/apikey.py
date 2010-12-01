@@ -81,3 +81,15 @@ class APIKeyManager(SchemaAdapterBase):
             if len(value) == 2:
                 res[value[0].strip()] = value[1].strip()
         return res
+
+    def api_key(self, request):
+        """Return associated google api key for the current request
+        Return None if no key found"""
+        host = self.request.get('SERVER_URL')
+        keys = self.get_google_keys()
+        res = {}
+        for value in keys:
+            if value.startswith(host):
+                value = value.split("|")
+                if len(value) == 2:
+                    return value[2].strip()
