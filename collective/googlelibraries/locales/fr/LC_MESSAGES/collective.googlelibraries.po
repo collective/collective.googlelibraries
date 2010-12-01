@@ -19,58 +19,64 @@ msgstr ""
 
 #: ./controlpanel.py:30
 msgid "GoogleLibraries settings"
-msgstr ""
+msgstr "Paramètres de googlelibraries"
 
 #: ./interfaces.py:64
 msgid "Key"
-msgstr ""
+msgstr "Clé"
 
 #: ./interfaces.py:39
 msgid "Library"
-msgstr ""
+msgstr "Librarie"
 
 #. Default: "Add Google Libraries API keys. You have to use the client side url at which your site is visible."
 #: ./interfaces.py:57
 msgid "help_google_keys"
-msgstr ""
+msgstr "Ajouter des clés associées à tous les noms de domaine pour lesquels"
+msgstr "votre site est accessible. Pour signer une clé allez sur "
+msgstr "http://code.google.com/apis/loader/signup.html"
 
 #. Default: "Add Google Libraries."
 #: ./interfaces.py:35
 msgid "help_libraires"
-msgstr ""
+msgstr "Ajouter des libraries javascript libres aux pages de votre site."
+msgstr "Ces libraries seront desservies par les serveurs de google (CDN)."
+msgstr "Il s'agit d'une bonne pratique permettant de décharger vos serveurs et"
+msgstr "d'améliorer le temps de chargement des pages du site."
+msgstr "Le service est gratuit."
 
 #. Default: "Google Libraries API Keys"
 #: ./interfaces.py:55
 msgid "label_google_keys"
-msgstr ""
+msgstr "Clés google d'authorisation d'accès"
 
 #. Default: "id"
 #: ./interfaces.py:11
 msgid "label_id"
-msgstr ""
+msgstr "Identifiant de la librarie"
 
 #. Default: "Google Libraries"
 #: ./interfaces.py:33
 msgid "label_libraries"
-msgstr ""
+msgstr "Libraries"
 
 #. Default: "Optional settings"
 #: ./interfaces.py:19
 msgid "label_optionalSettings"
-msgstr ""
+msgstr "Options supplémentaires non requises"
 
 #. Default: "Title"
 #: ./interfaces.py:13
 msgid "label_title"
-msgstr ""
+msgstr "Titre"
 
 #. Default: "URL minified"
 #: ./interfaces.py:17
 msgid "label_url"
-msgstr ""
+msgstr "URL de la version minifiée"
 
 #. Default: "Version"
 #: ./interfaces.py:15
 msgid "label_version"
-msgstr ""
+msgstr "version"
 
