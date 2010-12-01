@@ -69,25 +69,35 @@ class APIKeyManager(SchemaAdapterBase):
         return getattr(self.context, config.PROPERTY_GOOGLE_KEYS_FIELD, '')
 
     def set_google_keys(self, value):
+        res = []
+
+        for host_key in value:
+            if len(host_key.split('|')) == 2:
+                res.append(host_key)
+
+        value = tuple(res)
         self.context._updateProperty(config.PROPERTY_GOOGLE_KEYS_FIELD, value)
 
     google_keys = property(get_google_keys, set_google_keys)
 
     def get_google_keys_dict(self):
+
         keys = self.get_google_keys()
         res = {}
+
         for value in keys:
             value = value.split("|")
             if len(value) == 2:
                 res[value[0].strip()] = value[1].strip()
+
         return res
 
     def api_key(self, request):
-        """Return associated google api key for the current request
-        Return None if no key found"""
+
         host = request.get('SERVER_URL')
         keys = self.get_google_keys()
         res = {}
+
         for value in keys:
             if value.startswith(host):
                 value = value.split("|")

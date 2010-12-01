@@ -22,7 +22,7 @@ class Test(base.TestCase):
         self.failUnless(len(srcs)==1)
         self.failUnless('jsapi' in scripts[0]['src']) #must be the first
     
-    def test_libraries(self):
+    def test_scripts(self):
         apikey = self.view.apikey_manager
         apikey.google_keys = ('http://nohost | ZZOOPPEE',)
         library = self.view.library_manager

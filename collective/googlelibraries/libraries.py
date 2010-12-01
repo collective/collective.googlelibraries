@@ -204,7 +204,22 @@ class LibraryManager(SchemaAdapterBase):
         return tuple(res)
 
     def set_libraries(self, value):
-        self.context.plone_log('set ' + str(value))
+        res = []
+        libs = GOOGLE_LIBRARIES.keys()
+
+        for lib_version in value:
+            if len(lib_version.split('|')) != 2:
+                continue
+            lib, version = [a.strip() for a in lib_version.split('|')]
+            if lib not in libs:
+                continue
+            elif not version:
+                version = GOOGLE_LIBRARIES[lib].versions[-1]
+            elif version not in GOOGLE_LIBRARIES[lib].versions:
+                continue
+            res.append('%s | %s'%(lib, version))
+
+        value = tuple(res)
         self.properties._updateProperty(config.PROPERTY_LIBRARIES_FIELD, value)
 
     libraries = property(get_libraries, set_libraries)

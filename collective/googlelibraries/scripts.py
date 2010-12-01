@@ -30,37 +30,23 @@ class ScriptsView(ScriptsView):
 
         result = []
         libs = self.library_manager.libraries
-        mode = self.mode
         api_key = self.api_key
 
-        if mode == 'scripttag' and api_key:
+        if api_key:
             data = JSAPI.copy()
             data['src'] += self.api_key
             result.append(data)
+
+        if libs and api_key:
 
             for lib in libs:
                 data = BASE.copy()
                 data['src'] = lib.url
                 result.append(data)
 
-        if mode == 'autoload' and api_key:
-            data = JSAPI.copy()
-            modules = []
-
-            for lib in libs:
-                modules.append({"name":lib.id, "version":lib.version})
-
-            encoded_modules = urllib.quote(str({'modules':modules}))
-            data['src'] += self.api_key + '&autoload=' + encoded_modules
-            result.append(data)
-
         result.extend(super(ScriptsView,self).scripts())
 
         return result
-
-    @property
-    def mode(self):
-        return self.library_manager.loader_mode
 
     @property
     def api_key(self):
