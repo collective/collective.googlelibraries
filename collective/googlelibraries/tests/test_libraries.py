@@ -32,6 +32,13 @@ class Test(base.TestCase):
         self.manager.libraries = 'bad format'
         self.failUnless(len(self.manager.libraries)==0)
 
+    def test_optionalSettings(self):
+        lib = libraries.Library("maps", "Google Maps", '2', '', '')
+        lib.optionalSettings = {"callback" : "mapsLoaded", "wrongkey":"care?"}
+        settings = lib.optionalSettings
+        self.failUnless(settings.get('wrongkey',None) is None)
+        self.failUnless(settings.get('callback') == "mapsLoaded")
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(Test))

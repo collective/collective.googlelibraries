@@ -1,3 +1,7 @@
+import json
+import logging
+logger = logging.getLogger('c.googlelibraries')
+
 from zope import component
 from zope import interface
 from zope import schema
@@ -10,6 +14,7 @@ from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 from collective.googlelibraries import config
 from collective.googlelibraries import interfaces
 from collective.googlelibraries import messageFactory as _
+
 
 class Library(object):
     interface.implements(interfaces.ILibrary)
@@ -43,7 +48,8 @@ class Library(object):
     version = property(get_version, set_version)
 
     def __str__(self):
-        return '%s | %s'%(self.id, self.version)
+        return '%s | %s | %s'%(self.id, self.version,
+                               self.optionalSettings or '')
 
     def get_optionalSettings(self):
         return self._optionalSettings
@@ -59,7 +65,6 @@ class Library(object):
     optionalSettings = property(get_optionalSettings, set_optionalSettings)
 
 #Now lets define all available libraries
-
 GOOGLE_LIBRARIES = {}
 
 v = ('1.0.0', '1.0.1', '1.0.2')
@@ -135,12 +140,14 @@ class LibraryWidget(ASCIIWidget):
 
     def hasInput(self):
         return (self.name+'.id' in self.request.form and
-                self.name+'.version' in self.request.form)
+                self.name+'.version' in self.request.form and
+                self.name+'.settings')
 
     def _getFormInput(self):
         url = self.request.get(self.name+'.id').strip()
         key = self.request.get(self.name+'.version').strip()
-        return "%s | %s" % (url, key)
+        settings = self.request.get(self.name+'.settings').strip()
+        return "%s | %s | %s" % (url, key, settings)
 
     def __call__(self):
         value = self._getFormValue()
@@ -149,10 +156,10 @@ class LibraryWidget(ASCIIWidget):
         if value is None or value == self.context.missing_value:
             value = ''
         value = value.split("|")
-        if len(value) == 2:
-            value = (value[0].strip(), value[1].strip())
+        if len(value) == 3:
+            value = (value[0].strip(), value[1].strip(), value[2].strip())
         else:
-            value = ('', '')
+            value = ('', '', '')
 
         name = self.name + '.id'
         id = '<select id="%s" name="%s">'%(name, name)
@@ -172,7 +179,15 @@ class LibraryWidget(ASCIIWidget):
                             size=8,
                             extra=self.extra)
 
-        return "%s %s" % (id, version)
+        settings = renderElement(self.tag,
+                            type=self.type,
+                            name=self.name+'.settings',
+                            id=self.name+'.settings',
+                            value=value[2],
+                            cssClass=self.cssClass,
+                            size=40,
+                            extra=self.extra)
+        return "%s %s %s" % (id, version, settings)
 
 
 
@@ -199,6 +214,13 @@ class LibraryManager(SchemaAdapterBase):
             version = value[1].strip()
             if version:
                 library.version = version
+            settings = value[2].strip()
+            if settings:
+                try:
+                    library.optionalSettings = json.loads(settings)
+                except Exception, err_msg:
+                    logger.error('invalid settings for %s: %s'%(library,
+                                                                err_msg))
             res.append(library)
 
         return tuple(res)
@@ -208,16 +230,16 @@ class LibraryManager(SchemaAdapterBase):
         libs = GOOGLE_LIBRARIES.keys()
 
         for lib_version in value:
-            if len(lib_version.split('|')) != 2:
+            if len(lib_version.split('|')) < 2:
                 continue
-            lib, version = [a.strip() for a in lib_version.split('|')]
+            lib, version, settings = [a.strip() for a in lib_version.split('|')]
             if lib not in libs:
                 continue
             elif not version:
                 version = GOOGLE_LIBRARIES[lib].versions[-1]
             elif version not in GOOGLE_LIBRARIES[lib].versions:
                 continue
-            res.append('%s | %s'%(lib, version))
+            res.append('%s | %s | %s'%(lib, version, settings))
 
         value = tuple(res)
         self.properties._updateProperty(config.PROPERTY_LIBRARIES_FIELD, value)
