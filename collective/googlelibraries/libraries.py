@@ -18,21 +18,19 @@ from collective.googlelibraries import messageFactory as _
 
 class Library(object):
     interface.implements(interfaces.ILibrary)
-    def __init__(self, id, title, versions, url_u, url, version=''):
+    def __init__(self, id, version=''):
         self.id = id
-        self.title = title
-        self.versions = versions
+        if id not in GOOGLE_LIBRARIES_KEYS:
+            raise KeyError
         self._version = version
-        self._url = url
-        self._url_u = url_u
-        self.minified = True
         self._optionalSettings = {}
+        self.minified = True
 
     @property
     def url(self):
-        base = self._url
+        base = GOOGLE_LIBRARIES[self.id]['url']
         if not self.minified:
-            base = self._url_u
+            base = GOOGLE_LIBRARIES[self.id]['url_u']
 
         return base%({'version':self.version})
 
@@ -49,7 +47,7 @@ class Library(object):
 
     def __str__(self):
         return '%s | %s | %s'%(self.id, self.version,
-                               self.optionalSettings or '')
+                               self.minified or '')
 
     def get_optionalSettings(self):
         return self._optionalSettings
@@ -64,73 +62,72 @@ class Library(object):
 
     optionalSettings = property(get_optionalSettings, set_optionalSettings)
 
+    @property
+    def versions(self):
+        return GOOGLE_LIBRARIES[self.id]['versions']
+
 #Now lets define all available libraries
 GOOGLE_LIBRARIES = {}
+GOOGLE_LIBRARIES['chrome-frame'] = {}
+GOOGLE_LIBRARIES['chrome-frame']['versions'] = ('1.0.0', '1.0.1', '1.0.2')
+GOOGLE_LIBRARIES['chrome-frame']['url'] = "https://ajax.googleapis.com/ajax/libs/chrome-frame/%(version)s/CFInstall.min.js"
+GOOGLE_LIBRARIES['chrome-frame']['url_u'] = "https://ajax.googleapis.com/ajax/libs/chrome-frame/%(version)s/CFInstall.js"
 
-v = ('1.0.0', '1.0.1', '1.0.2')
-url = "https://ajax.googleapis.com/ajax/libs/chrome-frame/%(version)s/CFInstall.min.js"
-url_u = "https://ajax.googleapis.com/ajax/libs/chrome-frame/%(version)s/CFInstall.js"
-lib = Library("chrome-frame", "Chrome Frame", v, url_u, url)
-GOOGLE_LIBRARIES["chrome-frame"] = lib
+GOOGLE_LIBRARIES["dojo"] = {}
+GOOGLE_LIBRARIES["dojo"]['versions'] = ('1.1.1',
+      '1.2.0', '1.2.3',
+      '1.3.0', '1.3.1', '1.3.2',
+      '1.4.0', '1.4.1', '1.4.3',
+      '1.5')
+GOOGLE_LIBRARIES["dojo"]['url_u'] = "https://ajax.googleapis.com/ajax/libs/dojo/%(version)s/dojo/dojo.xd.js.uncompressed.js"
+GOOGLE_LIBRARIES["dojo"]['url'] = "https://ajax.googleapis.com/ajax/libs/dojo/%(version)s/dojo/dojo.xd.js"
 
-v = ('1.1.1',
-          '1.2.0', '1.2.3',
-          '1.3.0', '1.3.1', '1.3.2',
-          '1.4.0', '1.4.1', '1.4.3',
-          '1.5')
-url_u = "https://ajax.googleapis.com/ajax/libs/dojo/%(version)s/dojo/dojo.xd.js.uncompressed.js"
-url = "https://ajax.googleapis.com/ajax/libs/dojo/%(version)s/dojo/dojo.xd.js"
-lib = Library("dojo","Dojo", v, url_u, url)
-GOOGLE_LIBRARIES["dojo"] = lib
+GOOGLE_LIBRARIES["ext-core"] = {}
+GOOGLE_LIBRARIES["ext-core"]['versions'] = ('3.0.0','3.1.0')
+GOOGLE_LIBRARIES["ext-core"]['url_u'] = "https://ajax.googleapis.com/ajax/libs/ext-core/%(version)s/ext-core-debug.js"
+GOOGLE_LIBRARIES["ext-core"]['url'] = "https://ajax.googleapis.com/ajax/libs/ext-core/%(version)s/ext-core.js"
 
-v = ('3.0.0','3.1.0')
-url_u = "https://ajax.googleapis.com/ajax/libs/ext-core/%(version)s/ext-core-debug.js"
-url = "https://ajax.googleapis.com/ajax/libs/ext-core/%(version)s/ext-core.js"
-lib = Library("ext-core","Ext Core", v, url_u, url)
-
-GOOGLE_LIBRARIES["ext-core"] = lib
-
-v = ('1.2.3', '1.2.6',
+GOOGLE_LIBRARIES["jquery"] = {}
+GOOGLE_LIBRARIES["jquery"]['versions'] = ('1.2.3', '1.2.6',
      '1.3.0', '1.3.1', '1.3.2',
      '1.4.0', '1.4.1', '1.4.2','1.4.3','1.4.4')
-url_u = "https://ajax.googleapis.com/ajax/libs/jquery/%(version)s/jquery.js"
-url = "https://ajax.googleapis.com/ajax/libs/jquery/%(version)s/jquery.min.js"
-GOOGLE_LIBRARIES["jquery"] = Library("jquery","jQuery", v, url_u, url)
+GOOGLE_LIBRARIES["jquery"]['url_u'] = "https://ajax.googleapis.com/ajax/libs/jquery/%(version)s/jquery.js"
+GOOGLE_LIBRARIES["jquery"]['url'] = "https://ajax.googleapis.com/ajax/libs/jquery/%(version)s/jquery.min.js"
 
-v = ('1.5.2', '1.5.3',
+GOOGLE_LIBRARIES["jqueryui"] = {}
+GOOGLE_LIBRARIES["jqueryui"]['versions'] = ('1.5.2', '1.5.3',
      '1.6.0',
      '1.7.0','1.7.1', '1.7.2', '1.7.3',
      '1.8.0', '1.8.1', '1.8.2', '1.8.4', '1.8.5','1.8.6')
-url_u = "https://ajax.googleapis.com/ajax/libs/jqueryui/%(version)s/jquery-ui.js"
-url = "https://ajax.googleapis.com/ajax/libs/jqueryui/%(version)s/jquery-ui.min.js"
-GOOGLE_LIBRARIES["jqueryui"] = Library("jqueryui","jQuery UI", v, url_u, url)
+GOOGLE_LIBRARIES["jqueryui"]['url_u'] = "https://ajax.googleapis.com/ajax/libs/jqueryui/%(version)s/jquery-ui.js"
+GOOGLE_LIBRARIES["jqueryui"]['url'] = "https://ajax.googleapis.com/ajax/libs/jqueryui/%(version)s/jquery-ui.min.js"
 
-v = ('1.1.1', '1.1.2', '1.2.1', '1.2.2', '1.2.3', '1.2.4', '1.2.5','1.3.0')
-url_u = "https://ajax.googleapis.com/ajax/libs/mootools/%(version)s/mootools.js"
-url = "https://ajax.googleapis.com/ajax/libs/mootools/%(version)s/mootools-yui-compressed.js"
-GOOGLE_LIBRARIES["mootools"] =  Library("mootools","MooTools", v, url_u, url)
+GOOGLE_LIBRARIES["mootools"] = {}
+GOOGLE_LIBRARIES["mootools"]['versions'] = ('1.1.1', '1.1.2', '1.2.1', '1.2.2', '1.2.3', '1.2.4', '1.2.5','1.3.0')
+GOOGLE_LIBRARIES["mootools"]['url_u'] = "https://ajax.googleapis.com/ajax/libs/mootools/%(version)s/mootools.js"
+GOOGLE_LIBRARIES["mootools"]['url'] = "https://ajax.googleapis.com/ajax/libs/mootools/%(version)s/mootools-yui-compressed.js"
 
-v = ('1.6.0.2', '1.6.0.3', '1.6.1.0','1.7.0.0')
-url_u = "https://ajax.googleapis.com/ajax/libs/prototype/%(version)s/prototype.js"
-url = "https://ajax.googleapis.com/ajax/libs/prototype/%(version)s/prototype.js"
-GOOGLE_LIBRARIES["prototype"] = Library("prototype","Prototype", v, url_u, url)
+GOOGLE_LIBRARIES["prototype"] = {}
+GOOGLE_LIBRARIES["prototype"]['versions'] = ('1.6.0.2', '1.6.0.3', '1.6.1.0','1.7.0.0')
+GOOGLE_LIBRARIES["prototype"]['url_u'] = "https://ajax.googleapis.com/ajax/libs/prototype/%(version)s/prototype.js"
+GOOGLE_LIBRARIES["prototype"]['url'] = "https://ajax.googleapis.com/ajax/libs/prototype/%(version)s/prototype.js"
 
-v = ('1.8.1', '1.8.2','1.8.3')
-url_u = "https://ajax.googleapis.com/ajax/libs/scriptaculous/%(version)s/scriptaculous.js"
-url = "https://ajax.googleapis.com/ajax/libs/scriptaculous/%(version)s/scriptaculous.js"
-lib = Library("scriptaculous","script.aculo.us", v, url_u, url)
-GOOGLE_LIBRARIES["scriptaculous"] = lib
+GOOGLE_LIBRARIES["scriptaculous"] = {}
+GOOGLE_LIBRARIES["scriptaculous"]['versions'] = ('1.8.1', '1.8.2','1.8.3')
+GOOGLE_LIBRARIES["scriptaculous"]['url_u'] = "https://ajax.googleapis.com/ajax/libs/scriptaculous/%(version)s/scriptaculous.js"
+GOOGLE_LIBRARIES["scriptaculous"]['url'] = "https://ajax.googleapis.com/ajax/libs/scriptaculous/%(version)s/scriptaculous.js"
 
-v = ('2.1','2.2')
-url_u = "https://ajax.googleapis.com/ajax/libs/swfobject/%(version)s/swfobject_src.js"
-url = "https://ajax.googleapis.com/ajax/libs/swfobject/%(version)s/swfobject.js"
-GOOGLE_LIBRARIES["swfobject"] = Library("swfobject","SWFObject", v, url_u, url)
+GOOGLE_LIBRARIES["swfobject"] = {}
+GOOGLE_LIBRARIES["swfobject"]['versions'] = ('2.1','2.2')
+GOOGLE_LIBRARIES["swfobject"]['url_u'] = "https://ajax.googleapis.com/ajax/libs/swfobject/%(version)s/swfobject_src.js"
+GOOGLE_LIBRARIES["swfobject"]['url'] = "https://ajax.googleapis.com/ajax/libs/swfobject/%(version)s/swfobject.js"
 
-v = ('2.6.0', '2.7.0', '2.8.0r4', '2.8.1','2.8.2')
-url_u = "https://ajax.googleapis.com/ajax/libs/yui/%(version)s/build/yuiloader/yuiloader.js"
-url = "https://ajax.googleapis.com/ajax/libs/yui/%(version)s/build/yuiloader/yuiloader-min.js"
-lib = Library("yui","Yahoo! User Interface Library (YUI)", v, url_u, url)
-GOOGLE_LIBRARIES["yui"] = lib
+GOOGLE_LIBRARIES["yui"] = {}
+GOOGLE_LIBRARIES["yui"]['versions'] = ('2.6.0', '2.7.0', '2.8.0r4', '2.8.1','2.8.2')
+GOOGLE_LIBRARIES["yui"]['url_u'] = "https://ajax.googleapis.com/ajax/libs/yui/%(version)s/build/yuiloader/yuiloader.js"
+GOOGLE_LIBRARIES["yui"]['url'] = "https://ajax.googleapis.com/ajax/libs/yui/%(version)s/build/yuiloader/yuiloader-min.js"
+
+GOOGLE_LIBRARIES_KEYS = GOOGLE_LIBRARIES.keys()
 
 
 class LibraryWidget(ASCIIWidget):
@@ -163,7 +160,7 @@ class LibraryWidget(ASCIIWidget):
 
         name = self.name + '.id'
         id = '<select id="%s" name="%s">'%(name, name)
-        for i in GOOGLE_LIBRARIES.keys():
+        for i in GOOGLE_LIBRARIES_KEYS:
             if value[0] == i:
                 id += '<option value="%s" selected="selected" />%s'%(i, i)
             else:
@@ -179,14 +176,9 @@ class LibraryWidget(ASCIIWidget):
                             size=8,
                             extra=self.extra)
 
-        settings = renderElement(self.tag,
-                            type=self.type,
-                            name=self.name+'.settings',
-                            id=self.name+'.settings',
-                            value=value[2],
-                            cssClass=self.cssClass,
-                            size=40,
-                            extra=self.extra)
+        name = self.name + '.settings'
+        settings = '<input type="checkbox" id="%s" name="%s" value="minified" %s /> minified'%(name, name, self.minified and 'minified' or '')
+
         return "%s %s %s" % (id, version, settings)
 
 
@@ -208,9 +200,9 @@ class LibraryManager(SchemaAdapterBase):
         for lib in conf:
             value = lib.split('|')
             libname = value[0].strip()
-            library = GOOGLE_LIBRARIES.get(libname,None)
-            if library is None:
+            if libname not in GOOGLE_LIBRARIES_KEYS:
                 continue
+            library = Library(libname)
             version = value[1].strip()
             if version:
                 library.version = version
@@ -227,18 +219,32 @@ class LibraryManager(SchemaAdapterBase):
 
     def set_libraries(self, value):
         res = []
-        libs = GOOGLE_LIBRARIES.keys()
+
+        if type(value) not in (tuple, list):
+            return
 
         for lib_version in value:
-            if len(lib_version.split('|')) < 2:
-                continue
-            lib, version, settings = [a.strip() for a in lib_version.split('|')]
-            if lib not in libs:
+            stripped = [a.strip() for a in lib_version.split('|')]
+            lib = version = settings = ''
+            if len(stripped) == 1:
+                lib, = stripped
+            elif len(stripped) == 2:
+                lib, version = stripped
+            elif len(stripped) == 3:
+                lib, version, settings = stripped
+            else:
+                contine
+            if lib not in GOOGLE_LIBRARIES_KEYS:
                 continue
             elif not version:
-                version = GOOGLE_LIBRARIES[lib].versions[-1]
-            elif version not in GOOGLE_LIBRARIES[lib].versions:
+                version = GOOGLE_LIBRARIES[lib]['versions'][-1]
+            elif version not in GOOGLE_LIBRARIES[lib]['versions']:
                 continue
+            try:
+                json.loads(settings)
+            except:
+                settings = ''
+
             res.append('%s | %s | %s'%(lib, version, settings))
 
         value = tuple(res)
