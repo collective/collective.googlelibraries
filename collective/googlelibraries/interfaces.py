@@ -8,13 +8,16 @@ class IGoogleLibrariesLayer(interface.Interface):
 
 class ILibrary(interface.Interface):
     """ """
-    id = schema.ASCIILine(title=_(u"id"))
+    id = schema.ASCIILine(title=_("label_id",default=u"id"))
 
-    title = schema.TextLine(title=_(u"Title"))
+    title = schema.TextLine(title=_("label_title",default=u"Title"))
 
-    version = schema.ASCIILine(title=_(u"Version"))
+    version = schema.ASCIILine(title=_("label_version", default=u"Version"))
 
-    url = schema.URI(title=_(u"URL minified"))
+    url = schema.URI(title=_("label_url",default=u"URL minified"))
+    
+    optionalSettings = schema.Dict(title=_("label_optionalSettings",
+                                           default=u"Optional settings"))
 
 class ILibraryField(schema.interfaces.IASCIILine):
     u"""Field for Library"""
@@ -23,28 +26,14 @@ class LibraryField(schema.ASCIILine):
     __doc__ = ILibraryField.__doc__
     interface.implements(ILibraryField)
 
-DEFAULT_LOADER_MODE_CHOICES = schema.vocabulary.SimpleVocabulary((
-    schema.vocabulary.SimpleTerm('scripttag','scripttag',_(u'script tags')),
-    schema.vocabulary.SimpleTerm('autoload','autoload',_(u'Autoload')),
-))
-
 class ILibraryManager(interface.Interface):
     """The library manager. manage CRUD on Library"""
-
-
-    loader_mode = schema.Choice(
-                       title=_('label_loader_mode', default=u'Mode'),
-                       description=_('help_loader_mode',
-                                     default=u"Include mode used to include"
-                                     "libraries"),
-                       required=False,
-                       vocabulary=DEFAULT_LOADER_MODE_CHOICES)
 
     libraries = schema.Tuple(
                     title=_('label_libraries',
                             default=u'Google Libraries'),
                     description=_('help_libraires',
-                                  default=u"Add Google Libraries"),
+                                  default=u"Add Google Libraries."),
                     unique=True,
                     value_type=LibraryField(
                         title=_('Library'),

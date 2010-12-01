@@ -21,6 +21,7 @@ class Library(object):
         self._url = url
         self._url_u = url_u
         self.minified = True
+        self._optionalSettings = {}
 
     @property
     def url(self):
@@ -43,6 +44,19 @@ class Library(object):
 
     def __str__(self):
         return '%s | %s'%(self.id, self.version)
+
+    def get_optionalSettings(self):
+        return self._optionalSettings
+
+    def set_optionalSettings(self, value):
+        if type(value) != dict:
+            return
+        for k in value.keys():
+            if k not in config.OPTIONAL_SETTINGS_KEYS:
+                continue
+            self._optionalSettings[k] = value[k]
+
+    optionalSettings = property(get_optionalSettings, set_optionalSettings)
 
 #Now lets define all available libraries
 
@@ -169,14 +183,7 @@ class LibraryManager(SchemaAdapterBase):
 
     def __init__(self, context):
         self.context = context
-
-    def get_loader_mode(self):
-        return getattr(self.properties, config.PROPERTY_LOADER_MODE_FIELD, '')
-
-    def set_loader_mode(self, value):
-        self.properties._updateProperty(config.PROPERTY_LOADER_MODE_FIELD, value)
-
-    loader_mode = property(get_loader_mode, set_loader_mode)
+        self.loader_mode = "scripttags"
 
     def get_libraries(self):
         res = []
