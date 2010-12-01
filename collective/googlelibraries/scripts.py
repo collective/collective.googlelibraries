@@ -64,9 +64,7 @@ class ScriptsView(ScriptsView):
 
     @property
     def api_key(self):
-        google_keys = self.apikey_manager.get_google_keys_dict()
-        host = self.request.get('SERVER_URL')
-        return google_keys.get(host, '')
+        return self.apikey_manager.api_key(self.request)
 
     @property
     def apikey_manager(self):

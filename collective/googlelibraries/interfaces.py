@@ -64,3 +64,7 @@ class IAPIKeyManager(interface.Interface):
                         title=_('Key'),
                     ),
                   )
+
+    def api_key(request):
+        """Return the key associated to the host. The host is extracted
+        from the request object"""

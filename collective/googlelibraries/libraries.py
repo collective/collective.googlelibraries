@@ -193,7 +193,9 @@ class LibraryManager(SchemaAdapterBase):
         for lib in conf:
             value = lib.split('|')
             libname = value[0].strip()
-            library = GOOGLE_LIBRARIES[libname]
+            library = GOOGLE_LIBRARIES.get(libname,None)
+            if library is None:
+                continue
             version = value[1].strip()
             if version:
                 library.version = version
