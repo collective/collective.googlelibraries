@@ -1,6 +1,4 @@
 import json
-import logging
-logger = logging.getLogger('c.googlelibraries')
 
 from zope import component
 from zope import interface
@@ -46,8 +44,11 @@ class Library(object):
     version = property(get_version, set_version)
 
     def __str__(self):
-        return '%s | %s | %s'%(self.id, self.version,
-                               self.minified or '')
+        base = '%s | %s | '%(self.id, self.version)
+        if self.minified:
+            return base + 'minified'
+        else:
+            return base
 
     def get_optionalSettings(self):
         return self._optionalSettings
@@ -143,7 +144,7 @@ class LibraryWidget(ASCIIWidget):
     def _getFormInput(self):
         url = self.request.get(self.name+'.id').strip()
         key = self.request.get(self.name+'.version').strip()
-        settings = self.request.get(self.name+'.settings').strip()
+        settings = self.request.get(self.name+'.settings', 'uncompressed')
         return "%s | %s | %s" % (url, key, settings)
 
     def __call__(self):
@@ -177,7 +178,13 @@ class LibraryWidget(ASCIIWidget):
                             extra=self.extra)
 
         name = self.name + '.settings'
-        settings = '<input type="checkbox" id="%s" name="%s" value="minified" %s /> minified'%(name, name, self.minified and 'minified' or '')
+        settings = '<input type="checkbox" id="%s" name="%s" value="minified" %s /> minified'
+
+        if not value[2] or value[2] == 'minified':
+            minified = 'checked="checked"'
+        elif value[2] != 'minified':
+            minified = ''
+        settings = settings%(name, name, minified)
 
         return "%s %s %s" % (id, version, settings)
 
@@ -195,7 +202,6 @@ class LibraryManager(SchemaAdapterBase):
     def get_libraries(self):
         res = []
         conf = getattr(self.properties, config.PROPERTY_LIBRARIES_FIELD, '')
-        self.context.plone_log('get ' + str(conf))
 
         for lib in conf:
             value = lib.split('|')
@@ -207,12 +213,9 @@ class LibraryManager(SchemaAdapterBase):
             if version:
                 library.version = version
             settings = value[2].strip()
-            if settings:
-                try:
-                    library.optionalSettings = json.loads(settings)
-                except Exception, err_msg:
-                    logger.error('invalid settings for %s: %s'%(library,
-                                                                err_msg))
+            if settings and settings != 'minified':
+                library.minified = False
+
             res.append(library)
 
         return tuple(res)
@@ -240,11 +243,8 @@ class LibraryManager(SchemaAdapterBase):
                 version = GOOGLE_LIBRARIES[lib]['versions'][-1]
             elif version not in GOOGLE_LIBRARIES[lib]['versions']:
                 continue
-            try:
-                json.loads(settings)
-            except:
-                settings = ''
-
+            if settings != 'minified':
+                settings = 'uncompressed'
             res.append('%s | %s | %s'%(lib, version, settings))
 
         value = tuple(res)
