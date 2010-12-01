@@ -23,15 +23,9 @@ class GoogleLibrariesControlPanel(ControlPanelForm):
     * choose what to libraries to load / include
     * choose include mode
     """
-    apikeys = FormFieldsets(interfaces.IAPIKeyManager)
-    apikeys.id = 'apikey'
-    apikeys.label = _(u'API Keys')
     
-    libraries = FormFieldsets(interfaces.ILibraryManager)
-    libraries.id = 'libraries'
-    libraries.label = _(u'Libraries')
-    
-    form_fields = FormFieldsets(apikeys, libraries)
+    form_fields = FormFields(interfaces.IAPIKeyManager,
+                             interfaces.ILibraryManager)
 
     label = _("GoogleLibraries settings")
     description = None
