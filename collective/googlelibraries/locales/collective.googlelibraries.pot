@@ -1,0 +1,76 @@
+# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
+# SOME DESCRIPTIVE TITLE.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2010-12-01 23:20+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: collective.googlelibraries\n"
+
+#: ./controlpanel.py:30
+msgid "GoogleLibraries settings"
+msgstr ""
+
+#: ./interfaces.py:64
+msgid "Key"
+msgstr ""
+
+#: ./interfaces.py:39
+msgid "Library"
+msgstr ""
+
+#. Default: "Add Google Libraries API keys. You have to use the client side url at which your site is visible."
+#: ./interfaces.py:57
+msgid "help_google_keys"
+msgstr ""
+
+#. Default: "Add Google Libraries."
+#: ./interfaces.py:35
+msgid "help_libraires"
+msgstr ""
+
+#. Default: "Google Libraries API Keys"
+#: ./interfaces.py:55
+msgid "label_google_keys"
+msgstr ""
+
+#. Default: "id"
+#: ./interfaces.py:11
+msgid "label_id"
+msgstr ""
+
+#. Default: "Google Libraries"
+#: ./interfaces.py:33
+msgid "label_libraries"
+msgstr ""
+
+#. Default: "Optional settings"
+#: ./interfaces.py:19
+msgid "label_optionalSettings"
+msgstr ""
+
+#. Default: "Title"
+#: ./interfaces.py:13
+msgid "label_title"
+msgstr ""
+
+#. Default: "URL minified"
+#: ./interfaces.py:17
+msgid "label_url"
+msgstr ""
+
+#. Default: "Version"
+#: ./interfaces.py:15
+msgid "label_version"
+msgstr ""
+
