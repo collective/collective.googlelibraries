@@ -29,7 +29,8 @@ class Test(base.TestCase):
         library.libraries = ('jquery | 1.4.4',)
         scripts = self.view.scripts()
         script = scripts[1]
-        self.failUnless(script['src'] == 'https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js')
+        self.failUnless(script['src'] == 'https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js',
+                        script['src'])
 
     def test_googleapi(self):
         pass

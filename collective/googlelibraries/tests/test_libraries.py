@@ -61,7 +61,7 @@ class TestLibrary(unittest.TestCase):
     
     def test_tostring(self):
         tostring = str(self.lib)
-        self.failUnless(tostring == 'jquery | 1.4.4 | ', tostring)
+        self.failUnless(tostring == 'jquery | 1.4.4 | minified', tostring)
 
 def test_suite():
     suite = unittest.TestSuite()

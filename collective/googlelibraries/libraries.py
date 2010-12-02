@@ -17,12 +17,15 @@ from collective.googlelibraries import messageFactory as _
 class Library(object):
     interface.implements(interfaces.ILibrary)
     def __init__(self, id, version=''):
+        self.check_id(id)
         self.id = id
-        if id not in GOOGLE_LIBRARIES_KEYS:
-            raise KeyError
         self._version = version
         self._optionalSettings = {}
         self.minified = True
+
+    def check_id(self, id):
+        if id not in GOOGLE_LIBRARIES_KEYS:
+            raise KeyError
 
     @property
     def url(self):
