@@ -70,6 +70,16 @@ class Library(object):
     def versions(self):
         return GOOGLE_LIBRARIES[self.id]['versions']
 
+    def settings_schema(self):
+        return GoogleLibrarySettingsSchema
+
+class GoogleLibrarySettingsSchema(interface.Interface):
+    """The only option available on all libraries is the minified
+    option
+    """
+
+    minified = schema.Bool(title=_("label_minified", default="Minified"))
+
 #Now lets define all available libraries
 GOOGLE_LIBRARIES = {}
 GOOGLE_LIBRARIES['chrome-frame'] = {}
@@ -151,47 +161,57 @@ class LibraryWidget(ASCIIWidget):
         return "%s | %s | %s" % (url, key, settings)
 
     def __call__(self):
+        #build value for input in widget
         value = self._getFormValue()
         if type(value) == Library:
             value = str(value)
-        if value is None or value == self.context.missing_value:
+        elif value is None or value == self.context.missing_value:
             value = ''
+
         value = value.split("|")
         if len(value) == 3:
             value = (value[0].strip(), value[1].strip(), value[2].strip())
         else:
             value = ('', '', '')
 
-        name = self.name + '.id'
-        id = '<select id="%s" name="%s">'%(name, name)
-        for i in GOOGLE_LIBRARIES_KEYS:
-            if value[0] == i:
-                id += '<option value="%s" selected="selected" />%s'%(i, i)
-            else:
-                id += '<option value="%s" />%s'%(i, i)
-        id += '</select>'
+        #render
+        lib = self.render_libchoice(name, value[0])
+        version = self.render_version(value[1])
+        settings = self.render_settings(value[2])
 
-        version = renderElement(self.tag,
-                            type=self.type,
+        return "%s %s %s" % (lib, version, settings)
+
+    def render_libchoice(self, value=''):
+        name = self.tag + '.id'
+        rendered = '<select id="%s" name="%s">'%(name, name)
+        for i in GOOGLE_LIBRARIES_KEYS:
+            if i == value:
+                rendered += '<option value="%s" selected="selected" />%s'%(i, i)
+            else:
+                rendered += '<option value="%s" />%s'%(i, i)
+        rendered += '</select>'
+
+        return rendered
+
+    def render_version(self, value=''):
+        return renderElement(self.tag,
+                            type='text',
                             name=self.name+'.version',
                             id=self.name+'.version',
-                            value=value[1],
+                            value=value,
                             cssClass=self.cssClass,
                             size=8,
                             extra=self.extra)
 
+    def render_settings(self, value=''):
         name = self.name + '.settings'
         settings = '<input type="checkbox" id="%s" name="%s" value="minified" %s /> minified'
 
-        if not value[2] or value[2] == 'minified':
+        if not value or value == 'minified':
             minified = 'checked="checked"'
-        elif value[2] != 'minified':
+        elif value and value != 'minified':
             minified = ''
-        settings = settings%(name, name, minified)
-
-        return "%s %s %s" % (id, version, settings)
-
-
+        return settings%(name, name, minified)
 
 class LibraryManager(SchemaAdapterBase):
     """The library manager. manage CRUD on Library"""

@@ -19,12 +19,21 @@ class ILibrary(interface.Interface):
     optionalSettings = schema.Dict(title=_("label_optionalSettings",
                                            default=u"Optional settings"))
 
+    def settings_schema(self):
+        """Return schema associated to the optionSettings"""
+
 class ILibraryField(schema.interfaces.IASCIILine):
     u"""Field for Library"""
 
 class LibraryField(schema.ASCIILine):
     __doc__ = ILibraryField.__doc__
     interface.implements(ILibraryField)
+
+class LibrarySettingSchema(interface.Interface):
+    """Library can support settings. Settings are complex data structure
+    """
+
+    minified = schema.Bool(title=_("label_minified", default=u"Minified"))
 
 class ILibraryManager(interface.Interface):
     """The library manager. manage CRUD on Library"""

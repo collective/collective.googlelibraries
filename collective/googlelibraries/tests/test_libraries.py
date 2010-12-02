@@ -1,7 +1,10 @@
 import unittest
 
+from collective.googlelibraries import interfaces
 from collective.googlelibraries import libraries
 from collective.googlelibraries.tests import base
+
+from zope.publisher.browser import TestRequest
 
 class TestLibraryManager(base.TestCase):
 
@@ -63,8 +66,32 @@ class TestLibrary(unittest.TestCase):
         tostring = str(self.lib)
         self.failUnless(tostring == 'jquery | 1.4.4 | minified', tostring)
 
+class TestLibraryWidget(unittest.TestCase):
+    
+    def setUp(self):
+        field = interfaces.LibraryField()
+        self.widget = libraries.LibraryWidget(field, TestRequest())
+
+    def test_render_libchoice(self):
+        res = self.widget.render_libchoice()
+        for lib in libraries.GOOGLE_LIBRARIES_KEYS:
+            self.failUnless('<option value="%s" />%s'%(lib, lib) in res, res)
+        self.failUnless('selected="selected"' not in res)
+
+        res = self.widget.render_libchoice(value='jquery')
+        self.failUnless('<option value="jquery" selected="selected" />jquery' in res, res)
+
+    def test_render_version(self):
+        res = self.widget.render_version()
+        self.failUnless('value=""' in res, res)
+        self.failUnless('type="text"' in res, res)
+
+    def test_render_settings(self):
+        pass
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestLibraryManager))
     suite.addTest(unittest.makeSuite(TestLibrary))
+    suite.addTest(unittest.makeSuite(TestLibraryWidget))
     return suite
