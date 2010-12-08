@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0b1'
+version = '1.0b2dev'
 
 setup(name='collective.googlelibraries',
       version=version,
@@ -15,9 +15,9 @@ setup(name='collective.googlelibraries',
         "Programming Language :: Python",
         ],
       keywords='',
-      author='',
-      author_email='jeanmichel.francois@makina-corpus.com',
-      url='http://svn.plone.org/svn/collective/',
+      author='JeanMichel FRANCOIS',
+      author_email='toutpt@makina-corpus.org',
+      url='https://github.com/collective/collective.googlelibraries',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['collective'],
