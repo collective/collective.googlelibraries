@@ -11,7 +11,7 @@ How to use
 ==========
 
 Add this add-on to your setup configuration and install it as usual:
-http://plone.org/documentation/kb/add-ons/installing
+https://plone.org/documentation/kb/add-ons/installing
 
 A control panel is provided in the backoffice to let you setup your google
 api keys and to choose what libraries you want to include.
@@ -29,6 +29,6 @@ The jsapi and libraries are included only if you have provided a key_.
 A default key is initialized for localhost:8080 and for testing:8080 domains
 
 
-.. _key: http://code.google.com/apis/loader/signup.html
-.. _libraries: http://code.google.com/apis/libraries
-.. _loader: http://code.google.com/apis/loader
+.. _key: https://code.google.com/apis/loader/signup.html
+.. _libraries: https://code.google.com/apis/libraries
+.. _loader: https://code.google.com/apis/loader
